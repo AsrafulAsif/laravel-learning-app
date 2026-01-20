@@ -1,0 +1,4 @@
+1.api route install
+php artisan install:api
+
+2.
