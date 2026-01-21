@@ -3,6 +3,7 @@
 use App\Http\Controllers\Privilege\PermissionController;
 use App\Http\Controllers\Privilege\RoleController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\RequestMapping\RequestMappingController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -27,5 +28,14 @@ Route::prefix('permission')->group(function () {
         Route::post('/create', [PermissionController::class, 'create']);
         Route::get('/all', [PermissionController::class, 'getAllPermissions'])
             ->middleware('permission:permission.view.all');;
+    });
+});
+
+Route::prefix('request-mapping')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/{requestId}', [RequestMappingController::class, 'getByRequestId']);
+    });
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/{requestId}', [RequestMappingController::class, 'requestMapping']);
     });
 });
