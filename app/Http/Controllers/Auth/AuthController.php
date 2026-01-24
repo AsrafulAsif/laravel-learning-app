@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Exceptions\RecordNotFoundException;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\Auth\AuthService;
 use App\Traits\ApiResponseTrait;
@@ -17,9 +16,6 @@ class AuthController
         $this->authService = $authService;
     }
 
-    /**
-     * @throws RecordNotFoundException
-     */
     public function login(LoginRequest $request): JsonResponse
     {
         $responseData = $this->authService->login($request);

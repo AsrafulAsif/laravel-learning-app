@@ -2,33 +2,18 @@
 
 namespace App\Services\Auth;
 
-use App\Exceptions\RecordNotFoundException;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Auth\User;
-use App\Repositories\Contracts\UserRepositoryInterface;
 use DateTimeInterface;
 use Illuminate\Validation\UnauthorizedException;
 
 class AuthService
 {
-    protected UserRepositoryInterface $userRepository;
     protected int $sanctumExpirationMinutes = 1440;
 
-    public function __construct(UserRepositoryInterface $userRepository)
-    {
-        $this->userRepository = $userRepository;
-    }
-
-    /**
-     * @throws RecordNotFoundException
-     */
     public function login(LoginRequest $request): array
     {
-        $user = $this->userRepository->findUserByName($request->name);
-
-        if ($user === null) {
-            throw new RecordNotFoundException("User not found.");
-        }
+        $user = User::whereName($request->name)->firstOrFail();
 
         if ($user->password != $request->password) {
             throw new UnauthorizedException("Wrong password.");
@@ -52,8 +37,6 @@ class AuthService
      */
     protected function createToken(User $user, DateTimeInterface $expiresAt): string
     {
-//        $user->tokens()->delete();
-
         return $user->createToken(
             'api-token',
             ['*'],

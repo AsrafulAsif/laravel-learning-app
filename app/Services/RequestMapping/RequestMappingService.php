@@ -2,7 +2,7 @@
 
 namespace App\Services\RequestMapping;
 
-use App\Repositories\Contracts\RequestMappingRepositoryInterface;
+use App\Models\RequestMap\RequestMapping;
 use App\Utils\PlaceholderReplacer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,26 +11,35 @@ use Log;
 
 class RequestMappingService
 {
-    protected RequestMappingRepositoryInterface $repository;
+
     protected PlaceholderReplacer $placeholderReplacer;
-    public function __construct(RequestMappingRepositoryInterface $repository, PlaceholderReplacer $placeholderReplacer)
+    public function __construct(PlaceholderReplacer $placeholderReplacer)
     {
-        $this->repository = $repository;
         $this->placeholderReplacer = $placeholderReplacer;
     }
 
-    public function getByRequestId($requestId)
+    public function getByRequestId(int|string $requestId): RequestMapping
     {
-        $data = $this->repository->getByRequestId($requestId);
-        Log::info($data->request_json_template);
-        $data->request_json_template =
-            json_decode($data->request_json_template, true);
-        return $data;
+        // Automatically throws ModelNotFoundException if not found
+        $data = RequestMapping::where('request_id', $requestId)->firstOrFail();
+
+        // Decode JSON safely
+        $decodedTemplate = json_decode($data->request_json_template, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            Log::error("Failed to decode request_json_template for request_id: {$requestId}", [
+                'error' => json_last_error_msg()
+            ]);
+            $decodedTemplate = null;
+        }
+
+        // Add decoded JSON as a new attribute without mutating original column
+        return $data->setAttribute('request_json_template', $decodedTemplate);
     }
+
 
     public function requestMapping(int $requestId, Request $request):array
     {
-        $template = $this->repository->getByRequestId($requestId)->request_json_template;
+        $template = RequestMapping::where('request_id', $requestId)->firstOrFail()->request_json_template;
         $template =  $this->placeholderReplacer->replacePlaceholders($template, $request->all());
         $data = json_decode($template, true);
         $tableColumns = Schema::getColumnListing('main_data_table');

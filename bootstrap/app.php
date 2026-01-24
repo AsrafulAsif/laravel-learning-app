@@ -1,6 +1,5 @@
 <?php
 
-use App\Exceptions\RecordNotFoundException;
 use App\Http\Middleware\CheckApiPermission;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Traits\ApiResponseTrait;
@@ -40,21 +39,13 @@ return Application::configure(basePath: dirname(__DIR__))
         };
 
         /// 1. Handle Method Not Allowed (405)
-        $exceptions->render(function (MethodNotAllowedHttpException $e, Request $request) use ($responseHelper) {
-            return $responseHelper->error(
-                "The {$request->method()} method is not supported for this route.",
-                405
-            );
-        });
-
-        // 2. Handle Custom Record Not Found (Service Layer 404)
-        $exceptions->render(function (RecordNotFoundException $e) use ($responseHelper) {
-            return $responseHelper->error($e->getMessage(), 404);
+        $exceptions->render(function (MethodNotAllowedHttpException $e) use ($responseHelper) {
+            return $responseHelper->error($e->getMessage(), 405);
         });
 
         // 3. Handle Endpoint Not Found (Invalid URL 404)
-        $exceptions->render(function (NotFoundHttpException $e, Request $request) use ($responseHelper) {
-            return $responseHelper->error("The path '{$request->path()}' was not found.", 404);
+        $exceptions->render(function (NotFoundHttpException $e) use ($responseHelper) {
+            return $responseHelper->error($e->getMessage(), 404);
         });
         // 4. Handle ValidationException for request
         $exceptions->render(function (ValidationException $e) use ($responseHelper) {
