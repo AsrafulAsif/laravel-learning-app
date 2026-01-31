@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Privilege;
 
-use App\Exceptions\RecordNotFoundException;
-use App\Http\Requests\Privilege\RoleAddRequest;
+use App\Http\Requests\Privilege\RoleRequest;
+use App\Http\Requests\Privilege\UserRoleRequest;
 use App\Services\Privilege\RoleService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
@@ -22,19 +22,36 @@ class RoleController
         return $this->successResponse($response);
     }
 
-    public function create(RoleAddRequest $request): JsonResponse
+    public function create(RoleRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $this->roleService->create($data);
+        $this->roleService->create($request->validated());
         return $this->successResponse(null,"Role created",201);
     }
-
-    /**
-     * @throws RecordNotFoundException
-     */
-    public function assignRole(int $userId, int $roleId): JsonResponse
+    public function update(RoleRequest $request, int $role_id): JsonResponse
     {
-        $this->roleService->assignRoleToUser($userId, $roleId);
-        return $this->successResponse(null,"Role assigned",201);
+        $this->roleService->update($role_id, $request->validated());
+        return $this->successResponse(null,"Role updated");
+    }
+    public function delete(int $role_id): JsonResponse
+    {
+        $this->roleService->delete($role_id);
+        return $this->successResponse(null,"Role deleted");
+    }
+
+    public function assignRoleToUser(UserRoleRequest $request): JsonResponse
+    {
+        $this->roleService->assignRoleToUser($request->validated());
+        return $this->successResponse(null,"Role assigned");
+    }
+
+    public function toggleUserRoleStatus(UserRoleRequest $request): JsonResponse
+    {
+        $this->roleService->toggleUserRoleStatus($request->validated());
+        return $this->successResponse(null,"User Role status change.");
+    }
+    public function removeRole(UserRoleRequest $request): JsonResponse
+    {
+        $this->roleService->removeRole($request->validated());
+        return $this->successResponse(null,"Role removed");
     }
 }

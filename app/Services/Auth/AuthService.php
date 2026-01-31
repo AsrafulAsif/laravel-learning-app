@@ -30,11 +30,7 @@ class AuthService
         ];
     }
 
-    /*
-     * ---------------------------------
-     * private function to create token.
-     * ---------------------------------
-     */
+
     protected function createToken(User $user, DateTimeInterface $expiresAt): string
     {
         return $user->createToken(

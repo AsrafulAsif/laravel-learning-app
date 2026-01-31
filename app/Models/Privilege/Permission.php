@@ -16,6 +16,8 @@ class Permission extends Model
         'permission_display_name',
         'permission_description',
         'controller_name',
+        'api_url',
+        'method_name',
         'is_active',
         'is_deleted',
         'created_by',
@@ -26,27 +28,14 @@ class Permission extends Model
         'deleted_at',
     ];
 
-    /*
-     * MySQL stores booleans as TINYINT(1) (0 or 1), so when for retrieve data,
-     * we get integers instead of actual boolean values.
-    */
     protected $casts = [
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
         'created_by' => 'integer',
         'updated_by' => 'integer',
         'deleted_by' => 'integer',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+        'created_at' => 'timestamp',
+        'updated_at' => 'timestamp',
+        'deleted_at' => 'timestamp',
     ];
-
-    /**
-     * Relationship: Permission belongs to many roles
-     */
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class, 'role_permission')
-            ->withTimestamps();
-    }
 }

@@ -1,12 +1,7 @@
 <?php
 
-use App\Http\Controllers\Privilege\PermissionController;
-use App\Http\Controllers\Privilege\RoleController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\RequestMapping\RequestMappingController;
 use Illuminate\Support\Facades\Route;
-
-
 
 
 Route::prefix('auth')->group(function () {
@@ -14,28 +9,22 @@ Route::prefix('auth')->group(function () {
 });
 
 
-Route::prefix('role')->group(function () {
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/create', [RoleController::class, 'create']);
-        Route::get('/all', [RoleController::class, 'getAllRoles']);
-        Route::post('/assign-role', [RoleController::class, 'assignRole'])
-            ->middleware('permission:role.assign.to.user');
-    });
-});
+require __DIR__.'/Privilege/RoleRoute.php';
+require __DIR__.'/Privilege/PermissionRoute.php';
 
-Route::prefix('permission')->group(function () {
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/create', [PermissionController::class, 'create']);
-        Route::get('/all', [PermissionController::class, 'getAllPermissions'])
-            ->middleware('permission:permission.view.all');;
-    });
-});
-
-Route::prefix('request-mapping')->group(function () {
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/{requestId}', [RequestMappingController::class, 'getByRequestId']);
-    });
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/{requestId}', [RequestMappingController::class, 'requestMapping']);
-    });
-});
+//Route::prefix('permission')->group(function () {
+//    Route::middleware('auth:sanctum')->group(function () {
+//        Route::post('/create', [PermissionController::class, 'create']);
+//        Route::get('/all', [PermissionController::class, 'getAllPermissions'])
+//            ->middleware('permission:permission.view.all');;
+//    });
+//});
+//
+//Route::prefix('request-mapping')->group(function () {
+//    Route::middleware('auth:sanctum')->group(function () {
+//        Route::get('/{requestId}', [RequestMappingController::class, 'getByRequestId']);
+//    });
+//    Route::middleware('auth:sanctum')->group(function () {
+//        Route::post('/{requestId}', [RequestMappingController::class, 'requestMapping']);
+//    });
+//});

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Privilege;
 
-use App\Http\Requests\Privilege\PermissionAddRequest;
+use App\Http\Requests\Privilege\PermissionRequest;
+use App\Http\Requests\Privilege\PermissionSearchRequest;
+use App\Http\Requests\Privilege\RolePermissionRequest;
 use App\Services\Privilege\PermissionService;
 use App\Traits\ApiResponseTrait;
 
@@ -11,22 +13,49 @@ use Illuminate\Http\JsonResponse;
 class PermissionController
 {
     use ApiResponseTrait;
+
     protected PermissionService $permissionService;
+
     public function __construct(PermissionService $permissionService)
     {
         $this->permissionService = $permissionService;
     }
 
-    public function getAllPermissions() : JsonResponse
+    public function getAllPermissions(): JsonResponse
     {
         $response = $this->permissionService->getAllPermission();
         return $this->successResponse($response);
     }
 
-    public function create(PermissionAddRequest $request): JsonResponse
+    public function searchPermissions(PermissionSearchRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $this->permissionService->create($data);
-        return $this->successResponse(null,"Permission created",201);
+        $permissions = $this->permissionService->search(
+            $request->validated()['search']
+        );
+        return $this->successResponse($permissions);
+    }
+
+    public function create(PermissionRequest $request): JsonResponse
+    {
+        $this->permissionService->create($request->validated());
+        return $this->successResponse(null, "Permission created", 201);
+    }
+
+    public function update(PermissionRequest $request, int $permission_id): JsonResponse
+    {
+        $this->permissionService->update($request->validated(), $permission_id);
+        return $this->successResponse(null, "Permission updated");
+    }
+
+    public function delete(int $permission_id): JsonResponse
+    {
+        $this->permissionService->delete($permission_id);
+        return $this->successResponse(null,"Role deleted");
+    }
+
+    public function assignPermissionToRole(RolePermissionRequest $request): JsonResponse
+    {
+        $this->permissionService->assignPermissionToRole($request->validated());
+        return $this->successResponse(null,"Permission assigned");
     }
 }
