@@ -44,7 +44,7 @@ class PermissionService
                     ->orWhere('permission_description', 'LIKE', "%{$search}%")
                     ->orWhere('controller_name', 'LIKE', "%{$search}%")
                     ->orWhere('api_url', 'LIKE', "%{$search}%")
-                    ->orWhere('method_name', 'LIKE', "%{$search}%");
+                    ->orWhere('method_namea', 'LIKE', "%{$search}%");
             })
             ->latest()
             ->get();
