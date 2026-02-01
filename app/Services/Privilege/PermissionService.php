@@ -44,8 +44,24 @@ class PermissionService
                     ->orWhere('permission_description', 'LIKE', "%{$search}%")
                     ->orWhere('controller_name', 'LIKE', "%{$search}%")
                     ->orWhere('api_url', 'LIKE', "%{$search}%")
-                    ->orWhere('method_namea', 'LIKE', "%{$search}%");
+                    ->orWhere('method_name', 'LIKE', "%{$search}%");
             })
+            ->latest()
+            ->get();
+    }
+
+        public function searchV2(string $search): Collection
+    {
+        return Permission::query()
+            ->where('is_deleted', false)
+            ->whereAny([
+                ['permission_name','LIKE', "%{$search}%"],
+                ['permission_display_name','LIKE', "%{$search}%"],
+                ['permission_description','LIKE', "%{$search}%"],
+                ['controller_name','LIKE', "%{$search}%"],
+                ['api_url','LIKE', "%{$search}%"],
+                ['method_name','LIKE', "%{$search}%"],
+            ])
             ->latest()
             ->get();
     }
