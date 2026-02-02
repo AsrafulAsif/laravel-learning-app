@@ -64,4 +64,23 @@ class PermissionController
         $this->permissionService->removePermissionFromRole($request->validated());
         return $this->successResponse(null,"Permission removed");
     }
+
+    public function getRolePermissions(int $role_id): JsonResponse
+    {
+        $response = $this->permissionService->getRolePermissions($role_id);
+        return $this->successResponse($response);
+    }
+
+    public function getUserPermissions(int $user_id): JsonResponse
+    {
+        $response = $this->permissionService->getUserPermissions($user_id);
+
+        return $this->successResponse($response->toArray());
+    }
+
+    public function toggleRolePermissionStatus(RolePermissionRequest $request): JsonResponse
+    {
+        $this->permissionService->toggleRolePermissionStatus($request->validated());
+        return $this->successResponse(null,"Role permission status change.");
+    }
 }

@@ -30,9 +30,9 @@ class UserRoles extends Model
         return [
             'is_active' => 'boolean',
             'is_deleted' => 'boolean',
-            'created_at' => 'timestamp',
-            'updated_at' => 'timestamp',
-            'deleted_at' => 'timestamp',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'deleted_at' => 'datetime',
         ];
     }
 }

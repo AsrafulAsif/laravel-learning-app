@@ -33,9 +33,21 @@ class Role extends Model
         'created_by' => 'integer',
         'updated_by' => 'integer',
         'deleted_by' => 'integer',
-        'created_at' => 'timestamp',
-        'updated_at' => 'timestamp',
-        'deleted_at' => 'timestamp',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
+
+    //A Role can have many Permissions → also many-to-many.
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Permission::class,
+            'role_permissions',
+            'role_id',
+            'permission_id'
+        )->wherePivot('is_deleted', false)
+            ->where('permissions.is_deleted', false);
+    }
 
 }
