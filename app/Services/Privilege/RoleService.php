@@ -110,7 +110,7 @@ class RoleService
     }
 
 
-    public function removeRole(array $data): void
+    public function removeRoleFromUser(array $data): void
     {
         $userRole = UserRoles::where('user_id', $data['user_id'])
             ->where('role_id', $data['role_id'])

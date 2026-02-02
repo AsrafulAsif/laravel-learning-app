@@ -58,4 +58,10 @@ class PermissionController
         $this->permissionService->assignPermissionToRole($request->validated());
         return $this->successResponse(null,"Permission assigned");
     }
+
+    public function removePermissionFromRole(RolePermissionRequest $request): JsonResponse
+    {
+        $this->permissionService->removePermissionFromRole($request->validated());
+        return $this->successResponse(null,"Permission removed");
+    }
 }

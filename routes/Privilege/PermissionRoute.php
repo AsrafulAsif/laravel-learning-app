@@ -10,6 +10,7 @@ Route::prefix('permission')->group(function () {
         route::put('/update/{permission_id}', [PermissionController::class, 'update']);
         route::delete('/delete/{permission_id}', [PermissionController::class, 'delete']);
         route::post('/assign-to-role', [PermissionController::class, 'assignPermissionToRole']);
+        route::delete('/remove-from-role', [PermissionController::class, 'removePermissionFromRole']);
     });
 });
 

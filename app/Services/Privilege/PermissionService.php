@@ -99,4 +99,28 @@ class PermissionService
         Log::info("{$data['permission_id']} assign to {$data['role_id']} role successfully']}");
     }
 
+    public function removePermissionFromRole(array $data): void
+    {
+        $rolePermission = RolePermissions::where('role_id', $data['role_id'])
+            ->where('permission_id', $data['permission_id'])
+            ->where('is_deleted', false)
+            ->first();
+
+        if (!$rolePermission) {
+            throw ValidationException::withMessages([
+                'role_id' => ['This role is not assigned to the permission or already removed.'],
+            ]);
+        }
+
+        $rolePermission->update([
+            'is_active'  => false,
+            'is_deleted' => true,
+            'deleted_by' => auth()->user()->id,
+            'deleted_at' => now(),
+        ]);
+
+        Log::info("Permission removed successfully for role {$data['role_id']} and permission {$data['permission_id']}");
+
+    }
+
 }

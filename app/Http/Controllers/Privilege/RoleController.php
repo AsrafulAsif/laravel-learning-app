@@ -49,9 +49,9 @@ class RoleController
         $this->roleService->toggleUserRoleStatus($request->validated());
         return $this->successResponse(null,"User Role status change.");
     }
-    public function removeRole(UserRoleRequest $request): JsonResponse
+    public function removeRoleFromUser(UserRoleRequest $request): JsonResponse
     {
-        $this->roleService->removeRole($request->validated());
+        $this->roleService->removeRoleFromUser($request->validated());
         return $this->successResponse(null,"Role removed");
     }
 }
