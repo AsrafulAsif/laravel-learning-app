@@ -65,13 +65,13 @@ class PermissionController
         return $this->successResponse(null,"Permission removed");
     }
 
-    public function getRolePermissions(int $role_id): JsonResponse
+    public function getAllPermissionsByRoleId(int $role_id): JsonResponse
     {
         $response = $this->permissionService->getRolePermissions($role_id);
         return $this->successResponse($response);
     }
 
-    public function getUserPermissions(int $user_id): JsonResponse
+    public function getAllPermissionsByUserId(int $user_id): JsonResponse
     {
         $response = $this->permissionService->getUserPermissions($user_id);
 

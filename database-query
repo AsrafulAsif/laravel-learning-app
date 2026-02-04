@@ -181,14 +181,32 @@ ORDER BY controller_name, id;
 SELECT EXISTS (
     SELECT 1
     FROM users u
-    INNER JOIN user_roles ur ON u.id = ur.user_id AND ur.is_active = 1 AND ur.is_deleted = 0
-    INNER JOIN roles r ON r.id = ur.role_id AND r.is_deleted = 0 AND r.is_active = 1
-    INNER JOIN role_permissions rp ON rp.role_id = r.id AND rp.is_deleted = 0 AND rp.is_active = 1
-    INNER JOIN permissions p ON p.id = rp.permission_id AND p.is_deleted = 0 AND p.is_active = 1
-    WHERE u.id = 2
-      AND p.method_name = 'POST'
-      AND 'api/permission/create' REGEXP CONCAT('^', REPLACE(p.api_url, '{', '[^/]+'), '$')
+    INNER JOIN user_roles ur
+        ON u.id = ur.user_id
+       AND ur.is_active = 1
+       AND ur.is_deleted = 0
+    INNER JOIN roles r
+        ON r.id = ur.role_id
+       AND r.is_deleted = 0
+       AND r.is_active = 1
+    INNER JOIN role_permissions rp
+        ON rp.role_id = r.id
+       AND rp.is_deleted = 0
+       AND rp.is_active = 1
+    INNER JOIN permissions p
+        ON p.id = rp.permission_id
+       AND p.is_deleted = 0
+       AND p.is_active = 1
+    WHERE u.id = 1
+      AND p.method_name = 'DELETE'
+      AND 'api/role/delete/123'
+          REGEXP CONCAT(
+              '^',
+              REGEXP_REPLACE(p.api_url, '\\{[^/]+\\}', '[^/]+'),
+              '$'
+          )
 ) AS has_permission;
+
 
 
 

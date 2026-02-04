@@ -185,4 +185,36 @@ class PermissionService
         );
     }
 
+    public function userHasApiPermission(
+        int $userId,
+        string $method,
+        string $path
+    ): bool {
+        Log::info(
+            $userId.$method.$path
+        );
+        return Permission::query()
+            ->join('role_permissions as rp', function ($join) {
+                $join->on('permissions.id', '=', 'rp.permission_id')
+                    ->where('rp.is_active', true)
+                    ->where('rp.is_deleted', false);
+            })
+            ->join('roles as r', function ($join) {
+                $join->on('r.id', '=', 'rp.role_id')
+                    ->where('r.is_active', true)
+                    ->where('r.is_deleted', false);
+            })
+            ->join('user_roles as ur', function ($join) {
+                $join->on('ur.role_id', '=', 'r.id')
+                    ->where('ur.is_active', true)
+                    ->where('ur.is_deleted', false);
+            })
+            ->where('ur.user_id', $userId)
+            ->where('permissions.is_active', true)
+            ->where('permissions.is_deleted', false)
+            ->where('permissions.method_name', $method)
+            ->where('permissions.api_url', $path)
+            ->exists();
+    }
+
 }

@@ -38,16 +38,4 @@ class Permission extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
-
-    //A Permission can belong to many Roles → so the relationship is many-to-many.
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Role::class,
-            'role_permissions',
-            'permission_id',
-            'role_id')
-            ->wherePivot('is_deleted', false);
-//            ->where('permissions.is_deleted', false);
-    }
 }
