@@ -9,10 +9,11 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -51,8 +52,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (ValidationException $e) use ($responseHelper) {
             return $responseHelper->error("Validation failed", 422, $e->errors());
         });
-        // 5. Handle UnauthorizedException for user login
-        $exceptions->render(function (UnauthorizedException $e) use ($responseHelper) {
+        // 5. Handle UnauthorizedHttpException for user login
+        $exceptions->render(function (UnauthorizedHttpException $e) use ($responseHelper) {
             return $responseHelper->error($e->getMessage(), 401);
         });
         // 6. Handle QueryException
@@ -62,6 +63,15 @@ return Application::configure(basePath: dirname(__DIR__))
         // 7. Handle AuthenticationException
         $exceptions->render(function (AuthenticationException  $e) use ($responseHelper) {
             return $responseHelper->error($e->getMessage(), 401);
+        });
+
+        // 8. Handle AccessDeniedHttpException for user login
+        $exceptions->render(function (AccessDeniedHttpException $e) use ($responseHelper) {
+            return $responseHelper->error($e->getMessage(), $e->getStatusCode());
+        });
+        // 9. Handle abort
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\HttpException $e) use ($responseHelper) {
+            return $responseHelper->error($e->getMessage(), $e->getStatusCode());
         });
 
     })->create();

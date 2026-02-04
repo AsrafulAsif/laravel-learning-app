@@ -21,7 +21,7 @@ class PermissionService
             'is_active' => true,
             'is_deleted' => false,
             'created_at' => now(),
-            'created_by' => auth()->user()->id,
+            'created_by' => auth()->id(),
         ]);
 
         Log::info('Permission added successfully');
@@ -63,7 +63,7 @@ class PermissionService
             ->firstOrFail()
             ->update([
                 ...$data,
-                'updated_by' => auth()->user()->id,
+                'updated_by' => auth()->id(),
                 'updated_at' => now(),
             ]);
 
@@ -72,7 +72,7 @@ class PermissionService
 
     public function delete(int $permission_id): void
     {
-        $userId = auth()->user()->id;
+        $userId = auth()->id();
 
         // Return response immediately if this is in a controller
         SoftDeletePermissionJob::dispatch($permission_id, $userId);
@@ -98,7 +98,7 @@ class PermissionService
             'is_active' => true,
             'is_deleted' => false,
             'created_at' => now(),
-            'created_by' => auth()->user()->id,
+            'created_by' => auth()->id(),
         ]);
         Log::info("{$data['permission_id']} assign to {$data['role_id']} role successfully']}");
     }
@@ -119,7 +119,7 @@ class PermissionService
         $rolePermission->update([
             'is_active' => false,
             'is_deleted' => true,
-            'deleted_by' => auth()->user()->id,
+            'deleted_by' => auth()->id(),
             'deleted_at' => now(),
         ]);
 
@@ -174,7 +174,7 @@ class PermissionService
 
         $rolePermission->update([
             'is_active'  => $newStatus,
-            'updated_by' => auth()->user()->id,
+            'updated_by' => auth()->id(),
             'updated_at' => now(),
         ]);
 

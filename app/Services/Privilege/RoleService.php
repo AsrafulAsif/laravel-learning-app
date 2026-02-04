@@ -17,7 +17,7 @@ class RoleService
             ...$data,
             'is_active' => true,
             'is_deleted' => false,
-            'created_by' => auth()->user()->id,
+            'created_by' => auth()->id(),
         ]);
 
         Log::info('Role added successfully');
@@ -41,7 +41,7 @@ class RoleService
 
         $role->update([
             ...$data,
-            'updated_by' => auth()->user()->id,
+            'updated_by' => auth()->id(),
             'updated_at' => now(),
         ]);
 
@@ -50,7 +50,7 @@ class RoleService
 
     public function delete(int $role_id): void
     {
-        $userId = auth()->user()->id;
+        $userId = auth()->id();
 
         // Return response immediately if this is in a controller
         SoftDeleteRoleJob::dispatch($role_id, $userId);
@@ -75,7 +75,7 @@ class RoleService
             ...$data,
             'is_active' => true,
             'is_deleted' => false,
-            'created_by' => auth()->user()->id,
+            'created_by' => auth()->id(),
         ]);
         Log::info("Role assigned successfully for the user {$data['user_id']} and role {$data['role_id']}");
     }
@@ -86,19 +86,13 @@ class RoleService
         $userRole = UserRoles::where('user_id', $data['user_id'])
             ->where('role_id', $data['role_id'])
             ->where('is_deleted', false)
-            ->first();
-
-        if (!$userRole) {
-            throw ValidationException::withMessages([
-                'role_id' => ['Role not found for this user.'],
-            ]);
-        }
+            ->firstOrFail();
 
         $newStatus = !$userRole->is_active;
 
         $userRole->update([
             'is_active'  => $newStatus,
-            'updated_by' => auth()->user()->id,
+            'updated_by' => auth()->id(),
             'updated_at' => now(),
         ]);
 
@@ -126,12 +120,35 @@ class RoleService
         $userRole->update([
             'is_active'  => false,
             'is_deleted' => true,
-            'deleted_by' => auth()->user()->id,
+            'deleted_by' => auth()->id(),
             'deleted_at' => now(),
         ]);
 
         Log::info("Role removed successfully for user {$data['user_id']} and role {$data['role_id']}");
     }
 
+    public function getUserRoles(int $user_id): Collection
+    {
+        return Role::join('user_roles', 'roles.id', '=', 'user_roles.role_id')
+            ->where('user_roles.user_id', $user_id)
+            ->where('roles.is_deleted', false)
+            ->where('user_roles.is_deleted', false)
+            ->orderBy('roles.id')
+            ->select('roles.*')
+            ->get();
+    }
+
+    public function getUserRolesName(int $user_id): array
+    {
+        return Role::join('user_roles', 'roles.id', '=', 'user_roles.role_id')
+            ->where('user_roles.user_id', $user_id)
+            ->where('roles.is_active', true)
+            ->where('roles.is_deleted', false)
+            ->where('user_roles.is_active', true)
+            ->where('user_roles.is_deleted', false)
+            ->orderBy('roles.id')
+            ->pluck('roles.role_name')
+            ->toArray();
+    }
 
 }

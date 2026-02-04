@@ -6,6 +6,7 @@ use App\Services\Privilege\PermissionService;
 use App\Traits\ApiResponseTrait;
 use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class CheckApiPermission
 {
@@ -33,7 +34,7 @@ class CheckApiPermission
             path: $request->route()->uri()
         )
         ) {
-            return $this->errorResponse("You do not have permission to access this resource.", 403);
+            throw new AccessDeniedHttpException("You don't have permission to edit data flow");
         }
         return $next($request);
     }
