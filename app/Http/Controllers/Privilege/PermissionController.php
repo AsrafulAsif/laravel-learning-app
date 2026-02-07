@@ -75,7 +75,7 @@ class PermissionController
     {
         $response = $this->permissionService->getUserPermissions($user_id);
 
-        return $this->successResponse($response->toArray());
+        return $this->successResponse($response);
     }
 
     public function toggleRolePermissionStatus(RolePermissionRequest $request): JsonResponse

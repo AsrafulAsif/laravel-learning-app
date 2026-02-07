@@ -2,7 +2,6 @@
 
 namespace App\Services\Privilege;
 
-use App\Dto\UserPermissionsDTO;
 use App\Jobs\Privilege\SoftDeletePermissionJob;
 use App\Models\Auth\User;
 use App\Models\Privilege\Permission;
@@ -10,7 +9,6 @@ use App\Models\Privilege\RolePermissions;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use LaravelIdea\Helper\App\Models\Privilege\_IH_Permission_C;
 
 class PermissionService
 {
@@ -137,7 +135,7 @@ class PermissionService
             ->get();
     }
 
-    public function getUserPermissions(int $user_id): UserPermissionsDTO
+    public function getUserPermissions(int $user_id): array
     {
         $user = User::findOrFail($user_id);
 
@@ -153,7 +151,10 @@ class PermissionService
             ->select('permissions.*')
             ->distinct() // (remove duplicates if a user has the same permission via multiple roles)
             ->get();
-        return new UserPermissionsDTO($user, $permissions);
+        return [
+            'user' => $user,
+            'permissions' => $permissions,
+        ];
     }
 
     //this update for the role can not access the permission

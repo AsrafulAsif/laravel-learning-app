@@ -3,13 +3,11 @@
 namespace App\Services\Data;
 
 use App\Models\Data\DataItem;
+use App\Models\Data\WorkFlow;
 use App\Services\Privilege\RoleService;
-use Illuminate\Validation\ValidationException;
 use Log;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
-class DataFlowService
+class DataService
 {
     protected RoleService $roleService;
 
@@ -55,11 +53,13 @@ class DataFlowService
             403,
             "You don't have permission to edit data flow"
         );
-        $nextRole = match ($dataItem->current_role) {
-            'role1' => 'role2',
-            'role2' => 'role3',
-            'role3' => null,
-        };
+
+        $nextRole = WorkFlow::query()
+            ->where('workflow_name_id', $dataItem->workflow_id)
+            ->where('current_role', $dataItem->current_role)
+            ->value('next_role');
+
+        Log::info($nextRole);
 
         $dataItem->update([
             ...$data,

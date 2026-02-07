@@ -2,9 +2,7 @@
 
 namespace App\Models\Privilege;
 
-use App\Models\Auth\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Role extends Model
 {
@@ -12,6 +10,7 @@ class Role extends Model
 
     protected $table = 'roles';
     protected $primaryKey = 'id';
+
     public $timestamps = false;
     protected $fillable = [
         'role_name',

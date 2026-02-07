@@ -12,3 +12,4 @@ Route::prefix('auth')->group(function () {
 require __DIR__.'/Privilege/RoleRoute.php';
 require __DIR__.'/Privilege/PermissionRoute.php';
 require __DIR__.'/DataFlow/DataFlowRoute.php';
+require __DIR__.'/DataFlow/WorkFlowRoute.php';

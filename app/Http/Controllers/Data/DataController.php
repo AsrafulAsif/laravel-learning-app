@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\Data;
 
 use App\Http\Requests\Data\DataItemRequest;
-use App\Services\Data\DataFlowService;
+use App\Services\Data\DataService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 
-class DataFlowController
+class DataController
 {
     use ApiResponseTrait;
 
-    protected DataFlowService $dataFlowService;
-    public function __construct(DataFlowService $dataFlowService){
+    protected DataService $dataFlowService;
+    public function __construct(DataService $dataFlowService){
         $this->dataFlowService = $dataFlowService;
     }
     public function create(DataItemRequest $request) :JsonResponse

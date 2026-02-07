@@ -13,6 +13,7 @@ class DataItem extends Model
         'age',
         'status',
         'current_role',
+        'workflow_id',
         'created_by',
         'updated_by',
         'created_at',
